@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main(int argc, char *argv[]) {
+    // Vérification du nombre d'arguments
+    if (argc != 3) {
+        printf("Error : Invalid number of arguments\n");
+        printf("Usage : %s size ubound\n", argv[0]);
+        printf("build a random array of integers and return basic stats\n");
+        printf("size   : size of the array\n");
+        printf("ubound : values randomly choosen between 0 and ubound-1\n");
+        return EXIT_FAILURE;
+    }
+
+    // Conversion des arguments en entiers
+    int size = atoi(argv[1]);
+    int ubound = atoi(argv[2]);
+
+    // Vérification des valeurs d'entrée
+    if (size <= 0 || ubound <= 0) {
+        printf("Error : size and ubound must be positive integers\n");
+        return EXIT_FAILURE;
+    }
+
+    // Allocation dynamique de mémoire pour le tableau
+    int *p = (int *)malloc(size * sizeof(int));
+    if (p == NULL) {
+        printf("Error : Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    // Initialisation du générateur de nombres aléatoires
+    srand(time(NULL));
+
+    // Remplissage du tableau avec des valeurs aléatoires
+    for (int i = 0; i < size; i++) {
+        p[i] = rand() % ubound;
+    }
+
+    // Affichage des premières valeurs pour vérifier le bon fonctionnement
+    printf("First 10 values of the array:\n");
+    for (int i = 0; i < (size < 10 ? size : 10); i++) {
+        printf("%d ", p[i]);
+    }
+    printf("\n");
+
+    // Libération de la mémoire allouée
+    free(p);
+
+    return EXIT_SUCCESS;
+}
+
+
+#include <iostream>
+
+// Fonction qui compte le nombre d'éléments compris entre lowest et highest
+int compte(int t[], int size, int lowest, int highest) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (t[i] >= lowest && t[i] <= highest) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    // Exemple de tableau
+    int t[] = {1, 12, 5, 20, 35, 45, 30, 60, 85, 90, 100};
+    int size = sizeof(t) / sizeof(t[0]);
+    
+    // Trouver le minimum et le maximum du tableau
+    int min_val = t[0];
+    int max_val = t[0];
+    for (int i = 1; i < size; i++) {
+        if (t[i] < min_val) min_val = t[i];
+        if (t[i] > max_val) max_val = t[i];
+    }
+
+    // Calcul des déciles
+    int range = max_val - min_val;
+    int decile_size = range / 10;
+
+    // Afficher le nombre d'éléments dans chaque décile
+    for (int i = 0; i < 10; i++) {
+        int low = min_val + i * decile_size;
+        int high = min_val + (i + 1) * decile_size - 1;
+        int count = compte(t, size, low, high);
+        std::cout << "Décile " << i + 1 << " (" << low << " - " << high << "): " << count << " éléments" << std::endl;
+    }
+
+    return 0;
+}
